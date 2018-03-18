@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by Mega
+ * Created by WB71LR
  * Intellij IDEA
  */
 public class ClickItAuto extends JFrame{

@@ -6,7 +6,7 @@ import org.jnativehook.keyboard.NativeKeyListener;
 import java.awt.event.KeyEvent;
 
 /**
- * Created by Mega
+ * Created by WB71LR
  * Intellij IDEA
  */
 public class GlobalKeyListener implements NativeKeyListener {
@@ -18,6 +18,7 @@ public class GlobalKeyListener implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent nativeEvent) {
+
         if (Main.isKeyRequested) {
             Main.clickItAuto.key.setText(KeyEvent.getKeyText(nativeEvent.getRawCode()));
             Main.keyCode = nativeEvent.getRawCode();

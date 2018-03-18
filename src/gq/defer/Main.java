@@ -30,16 +30,20 @@ public class Main {
         try {
             GlobalScreen.registerNativeHook();
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-             bot = new Robot();
+            bot = new Robot();
         } catch (Exception e) {
-         //  logger.info(e.toString());
-           e.printStackTrace();
+            //  logger.info(e.toString());
+            e.printStackTrace();
         }
         GlobalScreen.addNativeKeyListener(new GlobalKeyListener());
 
         clickItAuto = new ClickItAuto();
 
         while (true) {
+            if (clickItAuto.isActive()) {
+                keyActive = false;
+            }
+
             if (keyActive) {
                 int minClickDelay = Integer.parseInt(clickItAuto.minClickDelay.getText());
                 int maxClickDelay = Integer.parseInt(clickItAuto.maxClickDelay.getText());
@@ -48,17 +52,12 @@ public class Main {
                 int maxReleaseDelay = Integer.parseInt(clickItAuto.maxReleaseDelay.getText());
 
                 int clickDelay = randomWithRange(minClickDelay, maxClickDelay);
-                int releaseDelay= randomWithRange(minReleaseDelay, maxReleaseDelay);
+                int releaseDelay = randomWithRange(minReleaseDelay, maxReleaseDelay);
 
                 handleEvent(clickDelay, releaseDelay, bot);
+
             }
 
-            if(clickItAuto.isActive()) {
-                while (clickItAuto.isActive()) {
-                    keyActive = false;
-                }
-                keyActive = true;
-            }
         }
     }
 
@@ -67,8 +66,8 @@ public class Main {
         return (int) (Math.random() * range) + min;
     }
 
-    private static void handleEvent(int clickDelay, int releaseDelay, Robot bot){
-        if(null != bot){
+    private static void handleEvent(int clickDelay, int releaseDelay, Robot bot) {
+        if (null != bot) {
             bot.delay(clickDelay);
             bot.mousePress(InputEvent.BUTTON1_MASK);
             bot.delay(releaseDelay);
