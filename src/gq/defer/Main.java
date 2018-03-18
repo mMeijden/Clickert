@@ -10,83 +10,69 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Mega
+ * Created by WB71LR
  * Intellij IDEA
  */
 @SuppressWarnings("squid:S2189")
 public class Main {
 
     public static int keyCode = KeyEvent.VK_F8;
-    public static double clicks;
-    public static int clicks_done;
     public static ClickItAuto clickItAuto;
     public static boolean isKeyRequested = false;
     public static boolean keyPress = false;
     public static boolean keyActive = false;
-    public static long lastTimeClicked = System.currentTimeMillis();
-
-    public static int clickDelay = 0;
-    public static int releaseDelay = 0;
-
-
-    static Robot bot = null;
 
 
     public static void main(String[] args) {
-        try {
-            GlobalScreen.registerNativeHook();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            bot = new Robot();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        GlobalScreen.addNativeKeyListener(new GlobalKeyListener());
-
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
+        Robot bot = null;
+        try {
+            GlobalScreen.registerNativeHook();
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+             bot = new Robot();
+        } catch (Exception e) {
+         //  logger.info(e.toString());
+           e.printStackTrace();
+        }
+        GlobalScreen.addNativeKeyListener(new GlobalKeyListener());
 
         clickItAuto = new ClickItAuto();
 
         while (true) {
             if (keyActive) {
-                int minClickDelay = (int) clickItAuto.minClickDelay.getValue();
-                int maxClickDelay = (int) clickItAuto.maxClickDelay.getValue();
-                int minReleaseDelay = (int) clickItAuto.minReleaseDelay.getValue();
-                int maxReleaseDelay = (int) clickItAuto.maxReleaseDelay.getValue();
+                int minClickDelay = Integer.parseInt(clickItAuto.minClickDelay.getText());
+                int maxClickDelay = Integer.parseInt(clickItAuto.maxClickDelay.getText());
 
-                clickDelay = randomWithRange(minClickDelay, maxClickDelay);
-                releaseDelay= randomWithRange(minReleaseDelay, maxReleaseDelay);
+                int minReleaseDelay = Integer.parseInt(clickItAuto.minReleaseDelay.getText());
+                int maxReleaseDelay = Integer.parseInt(clickItAuto.maxReleaseDelay.getText());
 
-                bot.delay(clickDelay);
-                bot.mousePress(InputEvent.BUTTON1_MASK);
-                bot.delay(releaseDelay);
-                bot.mouseRelease(InputEvent.BUTTON1_MASK);
+                int clickDelay = randomWithRange(minClickDelay, maxClickDelay);
+                int releaseDelay= randomWithRange(minReleaseDelay, maxReleaseDelay);
 
+                handleEvent(clickDelay, releaseDelay, bot);
             }
 
-            if(clickItAuto.isActive()){
-                while(clickItAuto.isActive()){
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        System.exit(-1);
-                    }
+            if(clickItAuto.isActive()) {
+                while (clickItAuto.isActive()) {
+                    keyActive = false;
                 }
+                keyActive = true;
             }
         }
     }
 
-    static int randomWithRange(int min, int max) {
+    private static int randomWithRange(int min, int max) {
         int range = (max - min) + 1;
         return (int) (Math.random() * range) + min;
+    }
+
+    private static void handleEvent(int clickDelay, int releaseDelay, Robot bot){
+        if(null != bot){
+            bot.delay(clickDelay);
+            bot.mousePress(InputEvent.BUTTON1_MASK);
+            bot.delay(releaseDelay);
+            bot.mouseRelease(InputEvent.BUTTON1_MASK);
+        }
     }
 }
